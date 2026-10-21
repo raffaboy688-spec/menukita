@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <!-- Pengaturan dasar halaman dan tampilan di ponsel -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#20251f">
+    <meta name="description" content="Menu digital cafe yang ringan dan dapat digunakan offline.">
+
+    <title>MenuKita | Menu Digital Cafe</title>
+
+    <!-- File CSS, manifest, dan ikon berada di folder proyek ini -->
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
+</head>
+<body>
+    <!-- Header berisi identitas cafe dan tombol utama -->
+    <header class="site-header">
+        <a class="brand" href="#beranda" aria-label="MenuKita, kembali ke beranda">
+            <span class="brand-mark" aria-hidden="true">M</span>
+            <span>Menu<span class="brand-accent">Kita</span></span>
+        </a>
+
+        <nav class="header-actions" aria-label="Aksi utama">
+            <a class="nav-link" href="#menu">Daftar Menu</a>
+            <button class="button button-outline header-button" id="adminToggle" type="button" aria-expanded="false" aria-controls="adminPanel">Kelola Menu</button>
+            <a class="button button-primary header-button" href="#keranjang">Keranjang <span id="cartCount" class="cart-count">0</span></a>
+        </nav>
+    </header>
+
+    <main class="page-container">
+        <!-- Hero: informasi utama cafe. Ubah teks ini sesuai cafe pengguna. -->
+        <section class="hero" id="beranda">
+            <div class="hero-content">
+                <p class="eyebrow">MENU DIGITAL • MUDAH DIAKSES</p>
+                <h1>Temukan menu<br><span>favoritmu.</span></h1>
+                <p class="hero-description">Lihat pilihan makanan dan minuman, cari sesuai selera, lalu hitung perkiraan belanjamu.</p>
+                <a class="button button-light" href="#menu">Jelajahi Menu <span aria-hidden="true">↓</span></a>
+                <p class="opening-hours"><span class="status-dot"></span> Jam operasional: 09.00–22.00</p>
+            </div>
+            <div class="hero-art" aria-hidden="true">
+                <div class="hero-circle hero-circle-one"></div>
+                <div class="hero-circle hero-circle-two"></div>
+                <div class="hero-food">☕</div>
+                <div class="hero-caption">Sajian hari ini</div>
+            </div>
+        </section>
+
+        <!-- Menu utama: pencarian, kategori, batas harga, dan kartu produk diisi JavaScript. -->
+        <section class="menu-section section-spacing" id="menu">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">PILIH SESUKAMU</p>
+                    <h2>Daftar Menu</h2>
+                    <p class="section-description">Pilih menu yang cocok untuk menemani harimu.</p>
+                </div>
+                <button class="button button-secondary" id="printMenu" type="button">Cetak Menu</button>
+            </div>
+
+            <div class="filter-panel">
+                <label class="search-field">
+                    <span aria-hidden="true">⌕</span>
+                    <input id="searchInput" type="search" placeholder="Cari makanan atau minuman..." autocomplete="off">
+                </label>
+                <label class="filter-field">
+                    <span>Kategori</span>
+                    <select id="categoryFilter">
+                        <option value="Semua">Semua kategori</option>
+                        <option value="Makanan">Makanan</option>
+                        <option value="Camilan">Camilan</option>
+                        <option value="Kopi">Kopi</option>
+                        <option value="Non-Kopi">Non-Kopi</option>
+                    </select>
+                </label>
+                <label class="filter-field">
+                    <span>Batas harga</span>
+                    <select id="priceFilter">
+                        <option value="0">Semua harga</option>
+                        <option value="10000">Hingga Rp10.000</option>
+                        <option value="20000">Hingga Rp20.000</option>
+                        <option value="30000">Hingga Rp30.000</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="category-chips" id="categoryChips" aria-label="Pilih kategori cepat">
+                <button class="chip active" type="button" data-category="Semua" aria-pressed="true">Semua</button>
+                <button class="chip" type="button" data-category="Makanan" aria-pressed="false">Makanan</button>
+                <button class="chip" type="button" data-category="Camilan" aria-pressed="false">Camilan</button>
+                <button class="chip" type="button" data-category="Kopi" aria-pressed="false">Kopi</button>
+                <button class="chip" type="button" data-category="Non-Kopi" aria-pressed="false">Non-Kopi</button>
+            </div>
+
+            <div class="results-line">
+                <p id="menuCount" aria-live="polite">Memuat menu...</p>
+                <p class="small-muted">Harga dalam rupiah</p>
+            </div>
+
+            <div class="menu-grid" id="menuGrid"></div>
+            <div class="empty-state" id="emptyState" hidden>
+                <span class="empty-icon" aria-hidden="true">⌕</span>
+                <h3>Menu tidak ditemukan</h3>
+                <p>Coba kata kunci atau filter yang berbeda.</p>
+                <button class="button button-secondary" id="resetFilters" type="button">Reset Filter</button>
+            </div>
+        </section>
+
+        <!-- Fitur bantuan memilih menu berdasarkan anggaran. -->
+        <section class="budget-section section-spacing" id="anggaran">
+            <div class="budget-copy">
+                <p class="eyebrow">BELANJA LEBIH TERENCANA</p>
+                <h2>Menu sesuai anggaran</h2>
+                <p>Masukkan batas pengeluaranmu untuk melihat produk yang harganya sesuai.</p>
+            </div>
+            <form class="budget-form" id="budgetForm">
+                <label for="budgetInput">Anggaran kamu (Rp)</label>
+                <div class="budget-input-row">
+                    <input id="budgetInput" type="number" min="1" step="1000" placeholder="Contoh: 20000" required>
+                    <button class="button button-primary" type="submit">Cari Menu</button>
+                </div>
+                <p class="budget-result" id="budgetResult" aria-live="polite"></p>
+            </form>
+        </section>
+
+        <!-- Keranjang adalah kalkulator di browser, bukan sistem pengiriman pesanan ke cafe. -->
+        <section class="cart-section section-spacing" id="keranjang">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">RINGKASAN PILIHAN</p>
+                    <h2>Keranjang Saya</h2>
+                    <p class="section-description">Atur jumlah produk dan lihat perkiraan totalnya.</p>
+                </div>
+                <button class="button button-text" id="clearCart" type="button">Kosongkan</button>
+            </div>
+
+            <div id="cartItems" class="cart-items">
+                <div class="cart-empty">
+                    <span aria-hidden="true">🛍️</span>
+                    <p>Keranjangmu masih kosong.</p>
+                    <a href="#menu">Lihat menu</a>
+                </div>
+            </div>
+
+            <div class="cart-summary">
+                <span>Perkiraan total</span>
+                <strong id="cartTotal">Rp0</strong>
+            </div>
+            <p class="cart-note">Catatan: keranjang hanya menghitung pilihan di browser ini. Pesanan tidak otomatis terkirim ke cafe.</p>
+            <button class="button button-primary" id="printCart" type="button">Cetak Ringkasan</button>
+        </section>
+
+        <!-- Panel admin lokal. Tidak menggunakan login karena tidak ada server/database. -->
+        <section class="admin-panel section-spacing" id="adminPanel" hidden>
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">PENGELOLAAN LOKAL</p>
+                    <h2>Kelola Menu</h2>
+                    <p class="section-description">Perubahan disimpan hanya di browser/perangkat ini.</p>
+                </div>
+                <span class="local-badge">Mode lokal</span>
+            </div>
+
+            <div class="notice-box">
+                <strong>Penting:</strong> Karena website ini tidak memakai database, data menu tidak tersinkron ke perangkat pelanggan lain. Untuk membagikan perubahan, ekspor data JSON lalu impor di perangkat lain, atau ubah data awal di file JavaScript dan publikasikan ulang.
+            </div>
+
+            <form id="menuForm" class="admin-form">
+                <input id="productId" type="hidden">
+                <div class="form-grid">
+                    <label>Nama produk
+                        <input id="productName" type="text" maxlength="70" required placeholder="Contoh: Es Kopi Susu">
+                    </label>
+                    <label>Kategori
+                        <select id="productCategory" required>
+                            <option value="Makanan">Makanan</option>
+                            <option value="Camilan">Camilan</option>
+                            <option value="Kopi">Kopi</option>
+                            <option value="Non-Kopi">Non-Kopi</option>
+                        </select>
+                    </label>
+                    <label>Harga (Rp)
+                        <input id="productPrice" type="number" min="0" step="500" required placeholder="15000">
+                    </label>
+                    <label>Emoji produk
+                        <input id="productEmoji" type="text" maxlength="8" placeholder="☕">
+                    </label>
+                    <label class="full-width">Deskripsi
+                        <textarea id="productDescription" rows="3" maxlength="240" required placeholder="Deskripsi singkat menu"></textarea>
+                    </label>
+                    <label class="checkbox-label full-width">
+                        <input id="productAvailable" type="checkbox" checked>
+                        Produk tersedia
+                    </label>
+                </div>
+                <div class="form-actions">
+                    <button class="button button-primary" id="saveProduct" type="submit">Simpan Menu</button>
+                    <button class="button button-secondary" id="cancelEdit" type="button" hidden>Batal Edit</button>
+                </div>
+            </form>
+
+            <div class="admin-tools">
+                <h3>Cadangan Data Menu</h3>
+                <p>Ekspor menu ke file JSON sebagai cadangan. Impor hanya file JSON yang kamu percaya.</p>
+                <div class="form-actions">
+                    <button class="button button-secondary" id="exportMenu" type="button">Ekspor JSON</button>
+                    <label class="button button-secondary file-button" for="importMenu">Impor JSON</label>
+                    <input id="importMenu" type="file" accept="application/json,.json" hidden>
+                    <button class="button button-danger-outline" id="resetMenu" type="button">Pulihkan Menu Contoh</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Informasi cafe dapat diganti sesuai kebutuhan. -->
+        <section class="about-section section-spacing" id="tentang">
+            <div>
+                <p class="eyebrow">TENTANG CAFE</p>
+                <h2>Menu enak, pilihan mudah.</h2>
+            </div>
+            <p>MenuKita adalah contoh menu digital sederhana yang membantu pengunjung menjelajahi pilihan makanan dan minuman melalui browser. Ganti informasi ini dengan cerita cafe milikmu.</p>
+        </section>
+
+        <section class="contact-section section-spacing" id="kontak">
+            <div>
+                <p class="eyebrow">KUNJUNGI KAMI</p>
+                <h2>Informasi Cafe</h2>
+            </div>
+            <address>
+                <p><strong>Nama:</strong> Cafe MenuKita</p>
+                <p><strong>Alamat:</strong> Isi alamat cafe di sini</p>
+                <p><strong>Jam buka:</strong> 09.00–22.00</p>
+                <p><strong>Kontak:</strong> Isi nomor cafe di sini</p>
+            </address>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <a class="brand footer-brand" href="#beranda">Menu<span class="brand-accent">Kita</span></a>
+        <p>Menu digital sederhana untuk pengalaman memilih yang lebih mudah.</p>
+        <p>© <span id="currentYear">2026</span> MenuKita</p>
+    </footer>
+
+    <!-- Pesan status kecil untuk memberi tahu hasil suatu aksi. -->
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+    <!-- JavaScript menjalankan pencarian, keranjang, pengelolaan menu, dan penyimpanan lokal. -->
+    <script src="./js/app.js" defer></script>
+</body>
+</html>
